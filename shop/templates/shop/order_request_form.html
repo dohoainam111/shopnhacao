@@ -1,0 +1,35 @@
+{% extends "shop/base.html" %}
+{% block title %}Liên hệ đặt hàng{% endblock %}
+{% block content %}
+<a href="{% url 'shop:product_detail' product.pk %}" class="back-link">&larr; Quay lại sản phẩm</a>
+<div class="form-page">
+    <h1>Liên hệ đặt hàng</h1>
+    {% if product %}
+        <p class="form-subtitle">Mô hình: <strong>{{ product.name }}</strong> — {{ product.price|floatformat:0 }} đ</p>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {# Honeypot field - ẩn bằng CSS, người dùng thật không thấy #}
+        <div class="hp-wrap" aria-hidden="true">
+            {{ form.website }}
+        </div>
+
+        {% for field in form %}
+            {% if field.name != "website" %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-error">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary btn-block">Gửi yêu cầu</button>
+    </form>
+</div>
+
+{% endblock %}

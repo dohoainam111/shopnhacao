@@ -1,0 +1,156 @@
+{% extends "shop/base.html" %}
+{% load humanize %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+
+<a href="{% url 'shop:product_list' %}" class="back-link">&larr; Quay lại danh sách</a>
+
+<div class="product-detail">
+    <div class="product-detail-img">
+        <div class="gallery-main-wrap">
+            {% if product.image %}
+            <img id="main-product-img" src="{{ product.image.url }}" alt="{{ product.name }}" onclick="openLightbox()">
+            {% elif product.gallery.all %}
+            <img id="main-product-img" src="{{ product.gallery.first.image.url }}" alt="{{ product.name }}" onclick="openLightbox()">
+            {% else %}
+            <img id="main-product-img" src="" alt="{{ product.name }}" style="display:none;" onclick="openLightbox()">
+            <div class="product-img-placeholder large" id="main-product-placeholder">🦸</div>
+            {% endif %}
+
+            <video id="main-product-video" controls style="display:none;">
+                {% if product.video %}
+                <source src="{{ product.video.url }}" type="video/mp4">{% endif %}
+                Trình duyệt không hỗ trợ xem video.
+            </video>
+
+            {% if product.gallery.all %}
+            <button type="button" class="gallery-nav gallery-nav-prev" onclick="galleryMove(-1)" aria-label="Trước">&#10094;</button>
+            <button type="button" class="gallery-nav gallery-nav-next" onclick="galleryMove(1)" aria-label="Sau">&#10095;</button>
+            {% endif %}
+        </div>
+    </div>
+    <div class="product-detail-info">
+        <span class="product-brand">{{ product.brand.name }} ({{ product.brand.get_country_display }})</span>
+        <h1>{{ product.name }}</h1>
+        <p class="product-price large">{{ product.price|floatformat:0|intcomma:False }} đ</p>
+        <p class="product-description">{{ product.description|linebreaks }}</p>
+        <a href="{% url 'shop:order_request_create_for_product' product.pk %}" class="btn btn-primary">Liên hệ đặt hàng</a>
+
+        {% if product.gallery.all or product.video %}
+        <div class="product-thumbs" id="thumb-list">
+            {% if product.image %}
+            <img class="thumb active" src="{{ product.image.url }}" data-type="image" onclick="gallerySelect(this)">
+            {% endif %}
+            {% for img in product.gallery.all %}
+            <img class="thumb" src="{{ img.image.url }}" data-type="image" onclick="gallerySelect(this)">
+            {% endfor %}
+            {% if product.video %}
+            <div class="thumb thumb-video" data-type="video" onclick="gallerySelect(this)">
+                <span class="thumb-video-icon">&#9654;</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Lightbox: hiển thị ảnh/video full màn hình -->
+<div id="lightbox-overlay" class="lightbox-overlay" onclick="closeLightbox(event)">
+    <button type="button" class="lightbox-close" onclick="closeLightbox(event)" aria-label="Đóng">&times;</button>
+    <button type="button" class="lightbox-nav lightbox-nav-prev" onclick="lightboxMove(event, -1)" aria-label="Trước">&#10094;</button>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="">
+    <video id="lightbox-video" class="lightbox-img" controls style="display:none;"></video>
+    <button type="button" class="lightbox-nav lightbox-nav-next" onclick="lightboxMove(event, 1)" aria-label="Sau">&#10095;</button>
+</div>
+
+<script>
+    function galleryThumbs() {
+        return Array.from(document.querySelectorAll('#thumb-list .thumb'));
+    }
+
+    function gallerySelect(el) {
+        const mainImg = document.getElementById('main-product-img');
+        const mainVideo = document.getElementById('main-product-video');
+        const placeholder = document.getElementById('main-product-placeholder');
+        const lightbox = document.getElementById('lightbox-overlay');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxVideo = document.getElementById('lightbox-video');
+        const lightboxOpen = lightbox.classList.contains('open');
+
+        galleryThumbs().forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+
+        if (el.dataset.type === 'video') {
+            mainImg.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'none';
+            mainVideo.style.display = 'block';
+            mainVideo.play();
+
+            if (lightboxOpen) {
+                lightboxImg.style.display = 'none';
+                lightboxVideo.style.display = 'block';
+                lightboxVideo.src = mainVideo.querySelector('source').src;
+                lightboxVideo.play();
+            }
+        } else {
+            mainVideo.pause();
+            mainVideo.style.display = 'none';
+            mainImg.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'none';
+            mainImg.src = el.src;
+
+            if (lightboxOpen) {
+                lightboxVideo.pause();
+                lightboxVideo.style.display = 'none';
+                lightboxImg.style.display = 'block';
+                lightboxImg.src = el.src;
+            }
+        }
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    function galleryMove(direction) {
+        const thumbs = galleryThumbs();
+        if (thumbs.length === 0) return;
+        let index = thumbs.findIndex(t => t.classList.contains('active'));
+        if (index === -1) index = 0;
+        index = (index + direction + thumbs.length) % thumbs.length;
+        gallerySelect(thumbs[index]);
+    }
+
+    function lightboxMove(e, direction) {
+        if (e) e.stopPropagation();
+        galleryMove(direction);
+    }
+
+    function openLightbox() {
+        const mainImg = document.getElementById('main-product-img');
+        if (!mainImg.src) return;
+        document.getElementById('lightbox-video').style.display = 'none';
+        document.getElementById('lightbox-video').pause();
+        document.getElementById('lightbox-img').style.display = 'block';
+        document.getElementById('lightbox-img').src = mainImg.src;
+        document.getElementById('lightbox-overlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(e) {
+        if (e) e.stopPropagation();
+        document.getElementById('lightbox-video').pause();
+        document.getElementById('lightbox-overlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function (e) {
+        const lightboxOpen = document.getElementById('lightbox-overlay').classList.contains('open');
+        if (e.key === 'ArrowLeft') {
+            lightboxOpen ? lightboxMove(null, -1) : galleryMove(-1);
+        }
+        if (e.key === 'ArrowRight') {
+            lightboxOpen ? lightboxMove(null, 1) : galleryMove(1);
+        }
+        if (e.key === 'Escape') closeLightbox();
+    });
+</script>
+
+{% endblock %}
