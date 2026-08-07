@@ -1,8 +1,12 @@
 {% extends "shop/base.html" %}
 {% load humanize %}
+{% load static %}
 {% block title %}Danh sách mô hình siêu nhân{% endblock %}
 {% block content %}
 
+<div class="hero-banner-simple">
+    <img src="{% static 'images/banner.jpg' %}" alt="Shop Nhà Cáo" class="hero-banner-img">
+</div>
 <div class="page-layout">
     <aside class="filters">
         <h3>Bộ lọc</h3>

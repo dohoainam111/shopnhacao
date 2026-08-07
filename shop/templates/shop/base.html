@@ -4,28 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Shop Mô Hình Nhà Cáo{% endblock %}</title>
+    <title>{% block title %}Shop Nhà Cáo{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="{% url 'shop:product_list' %}" class="logo">🦸 Shop Mô Hình Nhà Cáo</a>
+            <a href="{% url 'shop:product_list' %}" class="logo">🦸 Shop Nhà Cáo</a>
+            <div class="contact-bar-inner">
+                <a href="https://www.facebook.com/matdo.cao" target="_blank" rel="noopener" class="contact-item">
+                    <span class="contact-icon contact-icon-fb">f</span>
+                    Shop Nhà Cáo
+                </a>
+                <a href="tel:0388009707" class="contact-item">
+                    <span class="contact-icon contact-icon-phone">&#128222;</span>
+                    0388009707
+                </a>
+                <span class="contact-item">
+                    <span class="contact-icon contact-icon-location">&#128205;</span>
+                    Giao hàng toàn quốc
+                </span>
+            </div>
         </div>
     </header>
 
     <main class="container">
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
         {% endif %}
         {% block content %}{% endblock %}
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; {% now "Y" %} Shop Mô Hình Nhà Cáo</p>
+            <p>&copy; {% now "Y" %} Shop Nhà Cáo</p>
         </div>
     </footer>
 </body>

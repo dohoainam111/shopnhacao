@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 ]
 
 # Đăng admin bằng tiếng Việt cho dễ dùng
-ADMIN_SITE_HEADER = "Quản trị Shop Mô Hình Siêu Nhân"
+ADMIN_SITE_HEADER = "Quản trị Shop Nhà Cáo"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
