@@ -136,5 +136,5 @@ RATELIMIT_VIEW = None
 # Nếu sau này deploy nhiều worker/process, nên đổi sang Redis để rate limit chính xác hơn.
 SILENCED_SYSTEM_CHECKS = ["django_ratelimit.E003", "django_ratelimit.W001"]
 # Cho phép upload video lớn hơn mặc định (video 20-30s thường 5-20MB)
-DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800   # 50MB
-FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800   # 50MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000   # 500MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000   # 500MB
