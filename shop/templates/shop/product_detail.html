@@ -31,7 +31,7 @@
     </div>
     <div class="product-detail-info">
         <span class="product-brand">{{ product.brand.name }} ({{ product.brand.get_country_display }})</span>
-        <h1>{{ product.name }}</h1>
+        <h1>{% if product.is_sold %}<span class="sold-tag">(SOLD)</span> {% endif %}{{ product.name }}</h1>
         <p class="product-price large">{{ product.price|floatformat:0|intcomma:False }} đ</p>
         <p class="product-description">{{ product.description|linebreaks }}</p>
         <a href="{% url 'shop:order_request_create_for_product' product.pk %}" class="btn btn-primary">Liên hệ đặt hàng</a>

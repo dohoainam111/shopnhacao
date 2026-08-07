@@ -410,3 +410,8 @@ a.contact-item:hover {
         font-size: 0.8rem;
     }
 }
+/* Tag SOLD hiện trước tên sản phẩm đã bán */
+.sold-tag {
+    color: #e94560;
+    font-weight: 800;
+}

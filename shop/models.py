@@ -34,6 +34,7 @@ class Product(models.Model):
     description = models.TextField("Mô tả", blank=True)
     image = models.ImageField("Ảnh đại diện", upload_to="products/", blank=True, null=True)
     video = models.FileField("Video ngắn (giới thiệu, 20-30s)", upload_to="products/videos/", blank=True, null=True)
+    is_sold = models.BooleanField("Đã bán", default=False)
     is_active = models.BooleanField("Đang bán", default=True)
     created_at = models.DateTimeField("Ngày tạo", auto_now_add=True)
 

@@ -25,7 +25,7 @@ class ProductAdminForm(forms.ModelForm):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
-    list_display = ("name", "brand", "price", "is_active", "created_at")
+    list_display = ("name", "brand", "price", "is_sold" , "is_active", "created_at")
     list_filter = ("brand", "is_active", "brand__country")
     search_fields = ("name",)
     list_editable = ("price", "is_active")
