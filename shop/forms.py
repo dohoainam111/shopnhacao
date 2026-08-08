@@ -1,9 +1,16 @@
 from django import forms
 from .models import OrderRequest
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
+class ImagePreviewWidget(forms.ClearableFileInput):
+    template_name = "shop/widgets/image_preview_widget.html"
+
+class VideoPreviewWidget(forms.ClearableFileInput):
+    template_name = "shop/widgets/video_preview_widget.html"
 
 class MultipleFileField(forms.FileField):
     """Field cho phép chọn nhiều file ảnh cùng lúc trong 1 lần bấm."""

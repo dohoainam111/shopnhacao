@@ -30,6 +30,14 @@
                 <label>Giá đến</label>
                 <input type="number" name="max_price" class="form-control" value="{{ max_price }}" placeholder="VNĐ">
             </div>
+            <div class="filter-group">
+                <label>Tình trạng</label>
+                <select name="sold" class="form-control">
+                    <option value="" {% if selected_sold == "" %}selected{% endif %}>-- Tất cả --</option>
+                    <option value="available" {% if selected_sold == "available" %}selected{% endif %}>Còn hàng</option>
+                    <option value="sold" {% if selected_sold == "sold" %}selected{% endif %}>Đã bán</option>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary btn-block">Lọc</button>
             <a href="{% url 'shop:product_list' %}" class="btn btn-link btn-block">Xoá bộ lọc</a>
         </form>
@@ -46,7 +54,7 @@
                 <div class="product-img product-img-placeholder">🦸</div>
                 {% endif %}
                 <div class="product-info">
-                    <span class="product-brand">{{ product.brand.name }}</span>
+                    <span class="product-brand">{{ product.brand.name }} ({{ product.brand.get_country_display }})</span>
                     <h3 class="product-name">{% if product.is_sold %}<span class="sold-tag">(SOLD)</span> {% endif %}{{ product.name }}</h3>
                     <p class="product-price">{{ product.price|floatformat:0|intcomma:False }} đ</p>
                 </div>
@@ -57,11 +65,11 @@
         {% if page_obj.has_other_pages %}
         <div class="pagination">
             {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}&brand={{ selected_brand }}&min_price={{ min_price }}&max_price={{ max_price }}">« Trước</a>
+            <a href="?page={{ page_obj.previous_page_number }}&brand={{ selected_brand }}&min_price={{ min_price }}&max_price={{ max_price }}&sold={{ selected_sold }}">« Trước</a>
             {% endif %}
             <span>Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
             {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&brand={{ selected_brand }}&min_price={{ min_price }}&max_price={{ max_price }}">Sau »</a>
+            <a href="?page={{ page_obj.next_page_number }}&brand={{ selected_brand }}&min_price={{ min_price }}&max_price={{ max_price }}&sold={{ selected_sold }}">Sau »</a>
             {% endif %}
         </div>
         {% endif %}

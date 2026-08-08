@@ -1,0 +1,12 @@
+﻿<div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+    {% if widget.is_initial %}
+    <img src="{{ widget.value.url }}" style="max-height:160px;border-radius:6px;display:block;">
+    {% if not widget.required %}
+    <label style="display:flex; align-items:center; gap:4px; font-size:0.85rem;">
+        <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+        Xoa anh nay
+    </label>
+    {% endif %}
+    {% endif %}
+    {% include "django/forms/widgets/file.html" %}
+</div>

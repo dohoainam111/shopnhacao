@@ -19,6 +19,7 @@ def product_list(request):
     brand_id = request.GET.get("brand")
     min_price = request.GET.get("min_price")
     max_price = request.GET.get("max_price")
+    sold_status = request.GET.get("sold")
 
     if brand_id:
         products = products.filter(brand_id=brand_id)
@@ -26,6 +27,10 @@ def product_list(request):
         products = products.filter(price__gte=min_price)
     if max_price:
         products = products.filter(price__lte=max_price)
+    if sold_status == "available":
+        products = products.filter(is_sold=False)
+    elif sold_status == "sold":
+        products = products.filter(is_sold=True)
 
     paginator = Paginator(products, 12)
     page_obj = paginator.get_page(request.GET.get("page"))
@@ -36,6 +41,7 @@ def product_list(request):
         "selected_brand": brand_id or "",
         "min_price": min_price or "",
         "max_price": max_price or "",
+        "selected_sold": sold_status or "",
     }
     return render(request, "shop/product_list.html", context)
 

@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.db.models import Sum
 from .models import Brand, Product, OrderRequest, Revenue, ProductImage
 from django import forms
-from .forms import MultipleFileField
+from .forms import MultipleFileField , ImagePreviewWidget, VideoPreviewWidget
 from django.utils.html import format_html
+from django.db import models
 
 admin.site.site_header = "Quản trị Shop nhà Cáo"      # chữ hiện ở đầu mọi trang admin
 admin.site.site_title = "Shop Shop nhà Cáo"                 # chữ hiện trên tab trình duyệt
@@ -21,14 +22,36 @@ class ProductAdminForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = "__all__"
+        widgets = {
+            "image": ImagePreviewWidget(),
+            "video": VideoPreviewWidget(),
+        }
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 0
+    fields = ("image", "order")
+    formfield_overrides = {
+        models.ImageField: {"widget": ImagePreviewWidget},
+    }
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
-    list_display = ("name", "brand", "price", "is_sold" , "is_active", "created_at")
-    list_filter = ("brand", "is_active", "brand__country")
+    list_display = ("name", "brand", "price", "is_sold", "is_active", "created_at")
+    list_filter = ("brand", "is_active", "is_sold", "brand__country")
     search_fields = ("name",)
-    list_editable = ("price", "is_active")
+    list_editable = ("price", "is_active", "is_sold")
+    inlines = [ProductImageInline]
+
+    fields = (
+        "name", "brand", "price", "description",
+        "image",
+        "video",
+        "gallery_images",
+        "is_sold", "is_active",
+    )
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -36,6 +59,7 @@ class ProductAdmin(admin.ModelAdmin):
         if files:
             for f in files:
                 ProductImage.objects.create(product=obj, image=f)
+
 
 @admin.register(OrderRequest)
 class OrderRequestAdmin(admin.ModelAdmin):
@@ -72,15 +96,3 @@ class RevenueAdmin(admin.ModelAdmin):
         except (AttributeError, KeyError):
             pass
         return response
-@admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ("product", "image_preview", "order")
-    list_filter = ("product",)
-    list_editable = ("order",)
-    search_fields = ("product__name",)
-    list_per_page = 10
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" style="height:60px; border-radius:4px;" />', obj.image.url)
-        return "(không có ảnh)"
-    image_preview.short_description = "Ảnh"
