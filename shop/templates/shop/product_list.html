@@ -16,7 +16,7 @@
                 <select name="brand" class="form-control">
                     <option value="">-- Tất cả --</option>
                     {% for brand in brands %}
-                    <option value="{{ brand.id }}" {% if selected_brand= =brand.id|stringformat:"s" %}selected{% endif %}>
+                    <option value="{{ brand.id }}" {% if selected_brand == brand.id|stringformat:"s" %}selected{% endif %}>
                         {{ brand.name }} ({{ brand.get_country_display }})
                     </option>
                     {% endfor %}
