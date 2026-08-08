@@ -77,6 +77,7 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display = ("product", "image_preview", "order")
     list_filter = ("product",)
     list_editable = ("order",)
+    search_fields = ("product__name",)
     list_per_page = 10
     def image_preview(self, obj):
         if obj.image:
